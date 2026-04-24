@@ -4,7 +4,7 @@ const path = require('path');
 const mysql = require('mysql2');
 const app = express();
 
-// Enable CORS for all origins (you can restrict this later)
+// Enable CORS for all origins
 app.use(cors({
   origin: '*',
   credentials: true,
@@ -19,10 +19,12 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Database connection using environment variables
 const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'cynora_ng',
-  charset: 'utf8mb4'
+  charset: 'utf8mb4',
+  connectTimeout: 30000 // 30 seconds timeout
 });
 
 // Test database connection
@@ -31,6 +33,7 @@ db.connect((err) => {
     console.error('❌ Database connection failed:', err.message);
     console.error('Using these credentials:');
     console.error('Host:', process.env.DB_HOST || 'localhost');
+    console.error('Port:', process.env.DB_PORT || 3306);
     console.error('User:', process.env.DB_USER || 'root');
     console.error('Database:', process.env.DB_NAME || 'cynora_ng');
   } else {
